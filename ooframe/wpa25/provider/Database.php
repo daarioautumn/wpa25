@@ -17,8 +17,8 @@ class DB extends PDO {
     private $database; 
     private $user; 
     private $pass; 
-	private static $_instance;
-	private $table_name;
+  	private static $_instance;
+  	private $table_name;
 	
 	private $select_status;
 	private $select_sql;
@@ -37,12 +37,12 @@ class DB extends PDO {
 		return self::$_instance;
 	}
 	public function __construct() {
-		$this->engine = Config::get("database.engine"); 
-        $this->host = Config::get("database.hostname"); 
+		    $this->engine   = Config::get("database.engine"); 
+        $this->host     = Config::get("database.hostname"); 
         $this->database = Config::get("database.dbname"); 
-        $this->user = Config::get("database.username"); 
-        $this->pass = Config::get("database.password"); 
-        $dns = $this->engine.':dbname='.$this->database.";host=".$this->host; 
+        $this->user     = Config::get("database.username"); 
+        $this->pass     = Config::get("database.password"); 
+        $dns            = $this->engine.':dbname='.$this->database.";host=".$this->host; 
         parent::__construct( $dns, $this->user, $this->pass ); 
 	}
 	
@@ -58,21 +58,44 @@ class DB extends PDO {
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        public function insert($var){
-            $var_array = array_map(function($var){
-                return sprintf("'%s'", $var);
-            }, array_values($var));
-           $variables = implode(", ", $var_array);
-            $names = implode(", ", array_keys($var));
-            $sql = sprintf("INSERT INTO %s (%s) VALUES (%s)",$this->table_name,
-                $names, $variables);
-            return $this->exec($sql);
+        // public function insert($var){
+        //     $var_array = array_map(function($var){
+        //         return sprintf("'%s'", $var);
+        //     }, array_values($var));
+        //    $variables = implode(", ", $var_array);
+        //     $names = implode(", ", array_keys($var));
+        //     $sql = sprintf("INSERT INTO %s (%s) VALUES (%s)",$this->table_name,
+        //         $names, $variables);
+
+        //     echo $sql;die();
+        //     return $this->exec($sql);
+        // }
+
+        public function insert($values){
+          $keys=implode(", ", array_keys($values));
+          $values=implode("', '",array_values($values));
+          $sql="INSERT INTO $this->table_name ($keys) VALUES ('$values')";
+      
+          $stmt = $this->prepare($sql);
+          return $stmt->execute();
+         
         }
 
         public function delete($id){
             $sql = sprintf("DELETE FROM %s where id=%s", $this->table_name, $id);
             $stmt = $this->prepare($sql);
             return $stmt->execute();
+        }
+
+        public function update($id, $values){
+          // var_dump($id);
+          $keys=implode(", ", array_keys($values));
+          $values=implode("', '",array_values($values));
+          $sql="UPDATE $this->table_name SET ($keys) VALUES ('$values')";
+          // echo $sql;die();
+          $stmt = $this->prepare($sql);
+          return $stmt->execute();
+
         }
 
 

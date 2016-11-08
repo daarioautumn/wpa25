@@ -1,11 +1,11 @@
 <?php 
 
 return [
-	"engine"		=> 'mysql',
-	'hostname'	=> 'localhost',
-	'username'		=> 'root',
-	'password'		=> '',
-	'dbname'		=> 'wpa25db',
+	"engine"		 => 'mysql',
+	'hostname'   => 'localhost',
+	'username'   => 'web',
+	'password'   => '123456',
+	'dbname'     => 'wpa25',
 ];
 
  ?>
